@@ -3,7 +3,7 @@ VERSION : 0.1
    STRUCT
       month : Byte;
       year : Byte;
-      hour : Byte;ё
+      hour : Byte;
       day : Byte;
       second : Byte;
       minute : Byte;
@@ -18,7 +18,7 @@ TITLE = Symap in
 VERSION : 0.1
    STRUCT
       modul_4_b0_3 : Struct
-         "BINARY_I status_X2.3_0_b0" : Struct   // modul_4
+         "BINARY_I status_X2.3_0_b0_1" : Struct   // modul_4
             "X2_3_38" : Bool;
             "X2_3_39" : Bool;
             "X2_3_40" : Bool;
@@ -27,8 +27,6 @@ VERSION : 0.1
             "X2_3_43" : Bool;
             IS6 : Bool;
             IS7 : Bool;
-         END_STRUCT;
-         "BINARY_I status_X2.3_1_b1" : Struct  // modul_4
             "X2_3_30" : Bool;
             "X2_3_31" : Bool;
             "X2_3_32" : Bool;
@@ -38,7 +36,7 @@ VERSION : 0.1
             "X2_3_36" : Bool;
             "X2_3_37" : Bool;
          END_STRUCT;
-         "BINARY_I status_X2_1_0_b2" : Struct
+         "BINARY_I status_X2_1_0_b2_3" : Struct
             X2_1_9 : Bool;
             X2_1_10 : Bool;
             X2_1_12 : Bool;
@@ -47,8 +45,6 @@ VERSION : 0.1
             IS5 : Bool;
             IS6 : Bool;
             IS7 : Bool;
-         END_STRUCT;
-         "BINARY_I status_X2_2_1_b3" : Struct
             X2_2_18 : Bool;
             X2_2_20 : Bool;
             X2_2_16 : Bool;
@@ -60,7 +56,7 @@ VERSION : 0.1
          END_STRUCT;
       END_STRUCT;
       modul_5_b4_13 : Struct
-         "Ext.board BINARY_I/O status_0_b4" : Struct   // modul_5
+         "Ext.board BINARY_I/O status_0_b4_5" : Struct   // modul_5
             X6_32 : Bool;
             X6_33 : Bool;
             X6_34 : Bool;
@@ -69,8 +65,6 @@ VERSION : 0.1
             X6_37 : Bool;
             X6_38 : Bool;
             X6_39 : Bool;
-         END_STRUCT;
-         "Ext.board BINARY_I/O status_1_b5" : Struct   // modul_5
             X6_24 : Bool;
             X6_25 : Bool;
             X6_26 : Bool;
@@ -80,7 +74,7 @@ VERSION : 0.1
             X6_30 : Bool;
             X6_31 : Bool;
          END_STRUCT;
-         "Ext.board BINARY_I/O status_2_b6" : Struct   // modul_5
+         "Ext.board BINARY_I/O status_2_b6_7" : Struct   // modul_5
             X6_48 : Bool;
             X6_49 : Bool;
             X6_50 : Bool;
@@ -89,8 +83,6 @@ VERSION : 0.1
             X6_53 : Bool;
             X6_54 : Bool;
             X6_55 : Bool;
-         END_STRUCT;
-         "Ext.board BINARY_I/O status_3_b7" : Struct   // modul_5
             X6_40 : Bool;
             X6_41 : Bool;
             X6_42 : Bool;
@@ -100,7 +92,7 @@ VERSION : 0.1
             X6_46 : Bool;
             X6_47 : Bool;
          END_STRUCT;
-         "Ext.board BINARY_I/O status_4_b8" : Struct   // modul_5
+         "Ext.board BINARY_I/O status_4_b8_9" : Struct   // modul_5
             IOS4_0 : Bool;
             IOS4_1 : Bool;
             IOS4_2 : Bool;
@@ -109,8 +101,6 @@ VERSION : 0.1
             IOS4_5 : Bool;
             IOS4_6 : Bool;
             IOS4_7 : Bool;
-         END_STRUCT;
-         "Ext.board BINARY_I/O status_5_b9" : Struct   // modul_5
             X6_56 : Bool;
             X6_57 : Bool;
             X6_58 : Bool;
@@ -120,7 +110,7 @@ VERSION : 0.1
             IOS5_6 : Bool;
             IOS5_7 : Bool;
          END_STRUCT;
-         "Ext.board BINARY_I/O status_6_b10" : Struct   // modul_5
+         "Ext.board BINARY_I/O status_6_b10_11" : Struct   // modul_5
             X6_68 : Bool;
             X6_69 : Bool;
             X6_70 : Bool;
@@ -128,9 +118,7 @@ VERSION : 0.1
             X6_72 : Bool;
             X6_73 : Bool;
             X6_74 : Bool;
-            "EB_7" : Bool;
-         END_STRUCT;
-         "Ext.board BINARY_I/O status_7_b11" : Struct   // modul_5
+            X6_75 : Bool;
             X6_60 : Bool;
             X6_61 : Bool;
             X6_62 : Bool;
@@ -140,7 +128,7 @@ VERSION : 0.1
             X6_66 : Bool;
             X6_67 : Bool;
          END_STRUCT;
-         "Ext.board BINARY_I/O status_8_b12" : Struct   // modul_5
+         "Ext.board BINARY_I/O status_8_b12_13" : Struct   // modul_5
             IOS8_0 : Bool;
             IOS8_1 : Bool;
             IOS8_2 : Bool;
@@ -149,8 +137,6 @@ VERSION : 0.1
             IOS8_5 : Bool;
             IOS8_6 : Bool;
             IOS8_7 : Bool;
-         END_STRUCT;
-         "Ext.board BINARY_I/O status_9_b13" : Struct   // modul_5
             X6_76 : Bool;
             X6_77 : Bool;
             X6_78 : Bool;
@@ -161,118 +147,124 @@ VERSION : 0.1
             X6_83 : Bool;
          END_STRUCT;
       END_STRUCT;
-      modul_7_b14_29 : Struct
-         FDR_FR_b14_15 : Word;   // modul_7
-         FDR_U1_b16_17 : Word;   // modul_7
-         FDR_U2_b18_19 : Word;   // modul_7
-         FDR_U3_b20_21 : Word;   // modul_7
-         FDR_U12_b22_23 : Word;   // modul_7
-         FDR_U13_b24_25 : Word;   // modul_7
-         FDR_U23_b26_27 : Word;   // modul_7
-         FDR_UAvr_b28_29 : Word;   // modul_7
+      modul_7_b14_29 : Struct     // modul_7
+         FDR_FR_b14_15 : Word;   
+         FDR_U1_b16_17 : Word;   
+         FDR_U2_b18_19 : Word;   
+         FDR_U3_b20_21 : Word;   
+         FDR_U12_b22_23 : Word;   
+         FDR_U13_b24_25 : Word;   
+         FDR_U23_b26_27 : Word;   
+         FDR_UAvr_b28_29 : Word;   
       END_STRUCT;
-      modul_830_45 : Struct
-         BUS1_FR_b31_32 : Word;   // modul_8
-         BUS1_U1_b32_33 : Word;   // modul_8
-         BUS1_U2_b34_35 : Word;   // modul_8
-         BUS1_U3_b36_37 : Word;   // modul_8
-         BUS1_U12_b38_39 : Word;   // modul_8
-         BUS1_U13_b40_41 : Word;   // modul_8
-         BUS1_U23_b42_43 : Word;   // modul_8
-         BUS1_UAvr_b44_45 : Word;   // modul_8
+      modul_830_45 : Struct       // modul_8
+         BUS1_FR_b31_32 : Word;   
+         BUS1_U1_b32_33 : Word;   
+         BUS1_U2_b34_35 : Word;   
+         BUS1_U3_b36_37 : Word;   
+         BUS1_U12_b38_39 : Word;   
+         BUS1_U13_b40_41 : Word;   
+         BUS1_U23_b42_43 : Word;   
+         BUS1_UAvr_b44_45 : Word;   
       END_STRUCT;
-      modul_9_b46_61 : Struct
-         BUS2_FR_b46_47 : Word;   // modul_9
-         BUS2_U1_b48_49 : Word;   // modul_9
-         BUS2_U2_b50_51 : Word;   // modul_9
-         BUS2_U3_b52_53 : Word;   // modul_9
-         BUS2_U12_b54_55 : Word;   // modul_9
-         BUS2_U13_b56_57 : Word;   // modul_9
-         BUS2_U23_b58_59 : Word;   // modul_9
-         BUS2_UAvr_b60_61 : Word;   // modul_9
+      modul_9_b46_61 : Struct      // modul_9
+         BUS2_FR_b46_47 : Word;   
+         BUS2_U1_b48_49 : Word;   
+         BUS2_U2_b50_51 : Word;   
+         BUS2_U3_b52_53 : Word;   
+         BUS2_U12_b54_55 : Word;   
+         BUS2_U13_b56_57 : Word;   
+         BUS2_U23_b58_59 : Word;   
+         BUS2_UAvr_b60_61 : Word;   
       END_STRUCT;
-      modul_10_62_69 : Struct
-         FDR_I1_b62_63 : Word;   // modul_10
-         FDR_I2_b64_65 : Word;   // modul_10
-         FDR_I3_b65_67 : Word;   // modul_10
-         FDR_IAvr_b68_69 : Word;   // modul_10
+      modul_10_b62_69 : Struct     // modul_10
+         FDR_I1_b62_63 : Word;   
+         FDR_I2_b64_65 : Word;   
+         FDR_I3_b65_67 : Word;   
+         FDR_IAvr_b68_69 : Word;   
       END_STRUCT;
-      modul_12 : Struct
-         FDR_P : Word;   // modul_12
-         FDR_Q : Word;   // modul_12
-         FDR_S : Word;   // modul_12
-         FDR_PF : Word;   // modul_12
+      modul_12_b70_77 : Struct    // modul_12
+         FDR_P_b70_71 : Word;   
+         FDR_Q_b72_73 : Word;   
+         FDR_S_b74_75 : Word;   
+         FDR_PF_b76_77 : Word;   
       END_STRUCT;
-      modul_13 : Struct
-         FDR_PL1 : Word;   // modul_13
-         FDR_PL2 : Word;   // modul_13
-         FDR_PL3 : Word;   // modul_13
+      modul_13_b78_83 : Struct    // modul_13
+         FDR_PL1_b78_79 : Word;   
+         FDR_PL2_b80_81 : Word;   
+         FDR_PL3_b82_83 : Word;   
       END_STRUCT;
-      modul_14 : Struct
-         FDR_QL1 : Word;   // modul_14
-         FDR_QL2 : Word;   // modul_14
-         FDR_QL3 : Word;   // modul_14
+      modul_14_b84_89 : Struct    // modul_14
+         FDR_QL1_b84_85 : Word;   
+         FDR_QL2_b86_87 : Word;   
+         FDR_QL3_b88_89 : Word;   
       END_STRUCT;
-      modul_15 : Struct
-         FDR_PFL1 : Word;   // modul_15
-         FDR_PFL2 : Word;   // modul_15
-         FDR_PFL3 : Word;   // modul_15
+      modul_15_b90_95 : Struct     // modul_15
+         FDR_PFL1_b90_91 : Word;   
+         FDR_PFL2_b92_93 : Word;   
+         FDR_PFL3_b94_95 : Word;   
       END_STRUCT;
-      modul_16 : Struct
-         Cnt_P : Word;   // modul_16
-         Cnt_P_back : Word;   // modul_16
-         Cnt_Qcap : Word;   // modul_16
-         Cnt_Qind : Word;   // modul_16
+      modul_18_b96_111 : Struct      // modul_18
+         P_activ_b96_99 : DWord;   
+         P_obr_b100_103 : DWord;   
+         P_emk_reakt_b104_107 : DWord;   
+         P_ind_reakt_b108_111 : DWord;   
       END_STRUCT;
-      modul_17 : Struct
-         Io1 : Word;   // modul_17
-         Uo1 : Word;   // modul_17
-         Po1 : Word;   // modul_17
-         Qo1 : Word;   // modul_17
+      modul_16_b112_119 : Struct  // modul_16
+         Io1_b112_113 : Word;   
+         Uo1_b114_115 : Word;   
+         Po1_b116_117 : Word;   
+         Qo1_b118_119 : Word;   
       END_STRUCT;
-      modul_25 : Struct
-         Alarm1 : Word;   // modul_25
-         Alarm2 : Word;   // modul_25
-         Alarm3 : Word;   // modul_25
-         Alarm4 : Word;   // modul_25
-         Alarm5 : Word;   // modul_25
+      modul_25_b120_129 : Struct  // modul_25
+         Alarm1_b120_121 : Word;   
+         Alarm2_b122_123 : Word;   
+         Alarm3_b124_125 : Word;   
+         Alarm4_b126_127 : Word;   
+         Alarm5_b128_129 : Word;   
       END_STRUCT;
-      modul_31 : Struct
-         PM_Gen_number : Word;   // modul_31
-         PM_BCG_prstatus : Word;   // modul_31
-         PM_BCG_ownstatus : Word;   // modul_31
-         PM_BCG_netstatus : Word;   // modul_31
-         PM_8_9 : Word;   // modul_31
-         PM_10_11 : Word;   // modul_31
-         PM_12_13 : Word;   // modul_31
-         PM_14_15 : Word;   // modul_31
-         PM_16_17 : Word;   // modul_31
-         PM_18_19 : Word;   // modul_31
-         PM_20_21 : Word;   // modul_31
-         PM_asym_load_point : Word;   // modul_31
-         PM_asym_power_factor : Word;   // modul_31
+      modul_31_b130_155 : Struct     // modul_31
+         PM_Gen_number_b130_131 : Word;   
+         PM_BCG_prstatus_b132_133 : Word;  
+         PM_BCG_ownstatus_b134_135 : Word;   
+         PM_BCG_netstatus_b136_137 : Word;   
+         PM_8_9_b138_139 : Word;   
+         PM_10_11_b140_141 : Word;   
+         PM_12_13_b142_143 : Word;   
+         PM_14_15_b144_145 : Word;   
+         PM_16_17_b146_147 : Word;   
+         PM_18_19_b148_149 : Word;   
+         PM_20_21_b150_151 : Word;   
+         PM_asym_load_point_b152_153 : Word;   
+         PM_asym_power_factor_b151_155 : Word;   
       END_STRUCT;
-      modul_32 : Struct
-         P_kw : Word;   // modul_32
-         P_ps : Word;   // modul_32
-         F_I_amp : Word;   // modul_32
-         F_I_ps : Word;   // modul_32
-         F_U : Word;   // modul_32
-         F_freg : Word;   // modul_32
-         F_cosf : Word;   // modul_32
-         B1_U : Word;   // modul_32
-         B1_freg1 : Word;   // modul_32
-         RPM : Word;   // modul_33
-         BR1_ON_cycles : Word;   // modul_33
-         BR2_ON_cycles : Word;   // modul_33
-         BR3_ON_cycles : Word;   // modul_33
-         Start_counter : Word;   // modul_33
-         DP_MD33_R1 : Word;   // modul_33 not used
-         DP_MD33_R2 : Word;   // modul_33 not used
-         DP_MD33_R3 : Word;   // modul_33 not used
+      modul_32_b156_173 : Struct           // modul_32
+         P_kw_b156_157 : Word;   
+         P_ps_b158_159 : Word;   
+         F_I_amp_b160_161 : Word;   
+         F_I_ps_b162_163 : Word;   
+         F_U_b164_165 : Word;   
+         F_freg_b166_167 : Word;   
+         F_cosf_b168_169 : Word;   
+         B1_U_b170_171 : Word;   
+         B1_freg1_b172_173 : Word;   
       END_STRUCT;
-      modul_36 : Struct
-         Page_events_0_31_0 : Struct
+      modul_33_b174_189 : Struct    // modul_33
+         RPM_b174_175 : Word;   
+         BR1_ON_cycles_b176_177 : Word;   
+         BR2_ON_cycles_b178_179 : Word;   
+         BR3_ON_cycles_b180_181 : Word;   
+         Start_counter_b182_183 : Word;   
+         DP_MD33_R1_b184_185 : Word;    
+         DP_MD33_R2_b186_187 : Word;    
+         DP_MD33_R3_b188_189 : Word;   
+      END_STRUCT;
+      Time_work : Struct    // modul_20??????        
+         Hour_work : DWord; 
+         Minute_work : Word;
+      END_STRUCT;   
+      modul_36_b196_199 : Struct    // modul_36
+         Page_events_0_15_b196_197 : Struct
             AP_Event24 : Bool;
             AP_Event25 : Bool;
             AP_Event26 : Bool;
@@ -281,8 +273,6 @@ VERSION : 0.1
             AP_Event29 : Bool;
             AP_Event30 : Bool;
             AP_Event31 : Bool;
-         END_STRUCT;
-         Page_events_0_31_1 : Struct
             AP_Event16 : Bool;
             AP_Event17 : Bool;
             AP_Event18 : Bool;
@@ -292,7 +282,7 @@ VERSION : 0.1
             AP_Event22 : Bool;
             AP_Event23 : Bool;
          END_STRUCT;
-         Page_events_0_31_2 : Struct
+         Page_events_16_31_b198_199 : Struct
             AP_Event8 : Bool;
             AP_Event9 : Bool;
             AP_Event10 : Bool;
@@ -301,8 +291,6 @@ VERSION : 0.1
             AP_Event13 : Bool;
             AP_Event14 : Bool;
             AP_Event15 : Bool;
-         END_STRUCT;
-         Page_events_0_31_4 : Struct
             AP_Event0 : Bool;
             AP_Event1 : Bool;
             AP_Event2 : Bool;
@@ -313,9 +301,8 @@ VERSION : 0.1
             AP_Event7 : Bool;
          END_STRUCT;
       END_STRUCT;
-      modul_6 : "Time_set_Symap";
    END_STRUCT;
-
+   
 END_TYPE
 
 TYPE "UDT_Symap_OUT_b0_15"
