@@ -1,0 +1,24 @@
+ORGANIZATION_BLOCK OB1
+TITLE = 'Main Program Loop'
+VERSION : 0.1
+
+VAR_TEMP
+    // Обязательная системная структура стартовой информации OB1 для S7-300
+    OB1_EV_CLASS   : BYTE;   
+    OB1_SCAN_1     : BYTE;   
+    OB1_PRIORITY   : BYTE;   
+    OB1_OB_NUMBR   : BYTE;   
+    OB1_RESERVED_1 : BYTE;   
+    OB1_RESERVED_2 : BYTE;   
+    OB1_PREV_CYCLE : INT;    
+    OB1_MIN_CYCLE  : INT;    
+    OB1_MAX_CYCLE  : INT;    
+    OB1_DATE_TIME  : DATE_AND_TIME; 
+END_VAR
+
+BEGIN
+    // Вызов вашего блока данных по символьному имени
+    UC FB6, DB5;
+
+END_ORGANIZATION_BLOCK
+

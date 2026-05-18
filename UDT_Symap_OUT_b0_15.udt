@@ -1,0 +1,56 @@
+﻿TYPE "UDT_Symap_OUT_b0_15"
+VERSION : 0.1
+   STRUCT
+      "module 1_b0_11" : Struct
+         "Events byte 350_357_b0" : Struct
+            "event 350" : Bool;
+            "event 351" : Bool;
+            "event 352" : Bool;
+            "event 353" : Bool;
+            "event 354" : Bool;
+            "event 355" : Bool;
+            "event 356" : Bool;
+            "event 357" : Bool;
+         END_STRUCT;
+         "Events byte 358_365_b1" : Struct
+            "event 358" : Bool;
+            "event 359" : Bool;
+            "event 360" : Bool;
+            "event 361" : Bool;
+            "event 362" : Bool;
+            "event 363" : Bool;
+            "event 364" : Bool;
+            "event 365" : Bool;
+         END_STRUCT;
+         Control_Byte_b2 : Struct
+            "Change work" : Bool;   // изменить режим работы
+            Res : Bool;   // ACK
+            Set_time : Bool;   // установить новое время
+            Cb3 : Bool;
+            Cb4 : Bool;
+            Cb5 : Bool;
+            Cb6 : Bool;
+            Cb7 : Bool;
+         END_STRUCT;
+         New_Op_Mode_b3 : Struct
+            local : Bool;
+            remote : Bool;
+            SCADA : Bool;
+            "test local" : Bool;
+            "test remote" : Bool;
+            NM5 : Bool;
+            NM6 : Bool;
+            NM7 : Bool;
+         END_STRUCT;
+         Time_set_b4_11 : "Time_set_Symap";
+      END_STRUCT;
+      "module 30_b12_15" : Struct
+         "instr No_1_b5" : Byte;
+         "instr No_2_b6" : Byte;
+         "Data val _1_b7" : Byte;
+         "Data val _2_b8" : Byte;
+      END_STRUCT;
+   END_STRUCT;
+
+END_TYPE
+

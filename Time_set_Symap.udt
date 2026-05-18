@@ -1,0 +1,15 @@
+﻿TYPE "Time_set_Symap"
+VERSION : 0.1
+   STRUCT
+      month : Byte;
+      year : Byte;
+      hour : Byte;
+      day : Byte;
+      second : Byte;
+      minute : Byte;
+      "millisecond high Byte" : Byte;
+      "millisecond low Byte" : Byte;
+   END_STRUCT;
+
+END_TYPE
+

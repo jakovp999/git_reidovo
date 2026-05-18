@@ -1,0 +1,54 @@
+﻿FUNCTION_BLOCK "Read_Write_Symap"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+   VAR 
+      Address_OUT : Word := 16#0052;
+      Address_IN : Word := 16#03EC;
+      Symap_out { ExternalVisible := 'False'} : "UDT_Symap_OUT_b0_15";
+      AT_Symap_out { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} AT Symap_out : Array[0..15] of Byte;
+      Symap_in : "UDT_Symap_In";
+      Static_1 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} AT Symap_in : Array[0..157] of Byte;
+   END_VAR
+
+   VAR_TEMP 
+      retVal : Int;
+      ret_val_out : Int;
+      ret_val_in : Int;
+      k : Int;
+   END_VAR
+
+
+BEGIN
+	//Запись данных в SYMAP
+	//
+	//Передача выходных данных 
+	
+	// #ret_val_out := DPWR_DAT(LADDR  := W#16#52,      // Пример: адрес 82 в HEX
+	
+	//                      RECORD := #AT_Symap_out[0]); //  UDT целиком 12 байт
+	
+	// #ret_val_out := DPWR_DAT(LADDR  := W#16#5E,      // Пример: адрес 94 в HEX
+	
+	//                     RECORD := #AT_Symap_out[12]); //  UDT целиком 4 байт
+	
+	
+	//Запись в саймап ПБас 1,2
+	// FOR #i := 1 TO #n DO  // По колличеству саймап в профибас 1,2
+	// Получаем  адрес Q нужного выходда из заранее введенной структуры с адресами для PB1,2
+	//  Цикл записи 8 байт подготовленного времени в каждое устройство для PB1,2
+	// FOR #k := 0 TO 15 DO
+	
+	
+	
+	//     %QB(82+#k) := #AT_Symap_out[#k];
+	
+	// END_FOR;
+	// END_FOR;
+	
+	
+	//Получение входных данных 
+	
+	// #ret_val_in := DPRD_DAT(LADDR  := 1004, 
+	//                         RECORD => #Symap_in);
+END_FUNCTION_BLOCK
+

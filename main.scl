@@ -1,0 +1,9 @@
+﻿FUNCTION_BLOCK FB_Test
+VAR
+    Pump_Speed : INT; // Скорость насоса
+    Pump_Start : BOOL; // Старт насоса
+END_VAR
+BEGIN
+    // Начните писать строку ниже вручную:
+    p
+END_FUNCTION_BLOCK
