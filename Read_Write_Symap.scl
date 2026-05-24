@@ -26,6 +26,7 @@ VAR_TEMP
     In_Buffer_Words AT In_Buffer_Bytes : Array[1..104] of Word;
     In_Buffer_DWords AT In_Buffer_Bytes : Array[1..52] of DWord;// ДОБАВЛЯЕМ НАЛОЖЕНИЕ DW (208 байт = 52 двойных слова)
     Current_Raw_Real : Real;
+    Ret_Val_SFC : INT; 
 END_VAR
 
 BEGIN
@@ -37,11 +38,24 @@ FOR #i := 1 TO #N_device DO
     #Current_PIB := #Start_PIB + ((#i - 1) * #In_Bytes_Count); 
     
 
+
+    // ИСПРАВЛЕНИЕ: Вместо цикла FOR #b вызываем системную функцию чтения консистентных данных
+    // LADDR: Принимает адрес модуля, переведенный из Int в Word (например, 200 -> 16#00C8)
+    // RECORD: Передаем наш временный плоский массив байт. Функция заполнит его целиком.
+    //#Ret_Val_SFC := DPRD_DAT(LADDR := INT_TO_WORD(#Current_PIB), RECORD => #In_Buffer_Bytes);
+    // #Ret_Val_SFC := DPRD_DAT(LADDR := W#16#C8, RECORD => P#DB10.DBX0.0 BYTE 208);
+    // ПРИМЕЧАНИЕ ДЛЯ ОТЛАДКИ: Если #Ret_Val_SFC возвращает не 0, значит есть ошибка связи 
+    // или не совпадает длина буфера с настройками HW Config.
+
+
+
+
+
     //  сбор данных через DWord (шаг адреса +4 байта)
     FOR #ch_dw := 1 TO 52 DO
         #In_Buffer_DWords[#ch_dw] := %ID(#Current_PIB + (#ch_dw - 1) * 4):P;
     END_FOR;
-
+    
     // 2.Копируем мгновенную сырую структуру целиком в глобальный DB
     "Read_write_Symap_Db".Devices[#i].In := #In_Structure;
 
