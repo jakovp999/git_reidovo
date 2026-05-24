@@ -23,6 +23,7 @@ BEGIN
     // Вызов  FB "Read_Write_Symap" с указанием его экземплярного DB.
     "DB_FB_Read_Write_Symap"();
 
+    
     //"DB_FB_Read_Write_test_Symap"();
 
 END_ORGANIZATION_BLOCK

@@ -16,6 +16,7 @@ END_VAR
 VAR_TEMP	
     i : Int;           // Индекс текущего устройства 1..30
     b : Int;           // Индекс байта для циклов 
+    ch_dw : Int;       // Меняем индекс цикла b с байтового на шаг двойного слова (ch_dw)
     ch : Int;          // Индекс аналогового канала 1..41
     Current_PIB : Int; // Вычисленный физический адрес входов
     Current_PQB : Int; // Вычисленный физический адрес выходов	  
@@ -23,6 +24,7 @@ VAR_TEMP
     In_Buffer_Bytes : Array[0..207] of Byte;   // --- НАЛОЖЕНИЕ В ПАМЯТИ (OVERLAY) ---
     In_Structure AT In_Buffer_Bytes : "UDT_Symap_In";
     In_Buffer_Words AT In_Buffer_Bytes : Array[1..104] of Word;
+    In_Buffer_DWords AT In_Buffer_Bytes : Array[1..52] of DWord;// ДОБАВЛЯЕМ НАЛОЖЕНИЕ DW (208 байт = 52 двойных слова)
     Current_Raw_Real : Real;
 END_VAR
 
@@ -34,12 +36,12 @@ FOR #i := 1 TO #N_device DO
     // Расчет стартового адреса входов (%PIB) для текущего устройства
     #Current_PIB := #Start_PIB + ((#i - 1) * #In_Bytes_Count); 
     
-    // Побайтово собираем данные из периферии во временный массив
-    FOR #b := 0 TO (#In_Bytes_Count - 1) DO
-        
-        #In_Buffer_Bytes[#b] := %IB(#Current_PIB + #b):P;
+
+    //  сбор данных через DWord (шаг адреса +4 байта)
+    FOR #ch_dw := 1 TO 52 DO
+        #In_Buffer_DWords[#ch_dw] := %ID(#Current_PIB + (#ch_dw - 1) * 4):P;
     END_FOR;
-    
+
     // 2.Копируем мгновенную сырую структуру целиком в глобальный DB
     "Read_write_Symap_Db".Devices[#i].In := #In_Structure;
 
@@ -50,33 +52,29 @@ FOR #i := 1 TO #N_device DO
 
     // 4. ВЛОЖЕННЫЙ ЦИКЛ УСРЕДНЕНИЯ (Работает СТРОГО с одномерным локальным массивом)
     FOR #ch := 1 TO 41 DO
-        
-         // Переводим мгновенное значение Word в Real один раз
+        // Переводим мгновенное значение Word в Real один раз
         #Current_Raw_Real := INT_TO_REAL(WORD_TO_INT(#In_Buffer_Words[#ch + 7]));
         // А: ЗАПИСЫВАЕМ МГНОВЕННОЕ ЗНАЧЕНИЕ В REAL ДЛЯ SCADA
         "Read_write_Symap_Db".Devices[#i].Raw_Real[#ch] := #Current_Raw_Real;
         // Б: Считаем математику фильтрации (все переменные теперь строго Real)
         IF NOT #First_Scan_Done THEN
             #Temp_Ch_History[#ch] := #Current_Raw_Real;
-        ELSE
+            ELSE
             #Temp_Ch_History[#ch] := #Temp_Ch_History[#ch] + #K_Filter * (#Current_Raw_Real - #Temp_Ch_History[#ch]);
         END_IF;
 
-//каждый шаг формулы равен 100 мс (OB35), мы можем точно рассчитать, за сколько секунд сигнал сгладится. 
-//Существует строгое математическое правило для экспоненциального фильтра: сигнал достигает 99% 
-//от своего нового значения за количество шагов, равное: 4,6/K_Filter. Для 0,1(4,6сек) колличество шагов 46
-//Мы знаем, что один шаг занимает ровно 100 мс (0.1 секунды), значит фильтрация 4,6сек
-// При K_Filter := 0.2  (2.3) секунды
-
-        
+        //каждый шаг формулы равен 100 мс (OB35), мы можем точно рассчитать, за сколько секунд сигнал сгладится. 
+        //Существует строгое математическое правило для экспоненциального фильтра: сигнал достигает 99% 
+        //от своего нового значения за количество шагов, равное: 4,6/K_Filter. Для 0,1(4,6сек) колличество шагов 46
+        //Мы знаем, что один шаг занимает ровно 100 мс (0.1 секунды), значит фильтрация 4,6сек
+        // При K_Filter := 0.2  (2.3) секунды
         // В: ЗАПИСЫВАЕМ УСРЕДНЕННОЕ ЗНАЧЕНИЕ В REAL ДЛЯ SCADA 
         "Read_write_Symap_Db".Devices[#i].Filtered_Real[#ch] := #Temp_Ch_History[#ch];  
     END_FOR; 
-  // 5. Возвращаем обновленную историю назад в память FB
+    // 5. Возвращаем обновленную историю назад в память FB
     FOR #ch := 1 TO 41 DO
         #History_Analog[#i, #ch] := #Temp_Ch_History[#ch];
     END_FOR;
-
 END_FOR; 
 #First_Scan_Done := TRUE;
 END_FUNCTION_BLOCK
