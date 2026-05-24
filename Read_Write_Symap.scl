@@ -1,54 +1,62 @@
 ﻿FUNCTION_BLOCK "Read_Write_Symap"
-{ S7_Optimized_Access := 'FALSE' }
 VERSION : 0.1
-   VAR 
-      Address_OUT : Word := 16#0052;
-      Address_IN : Word := 16#03EC;
-      Symap_out { ExternalVisible := 'False'} : "UDT_Symap_OUT_b0_15";
-      AT_Symap_out { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} AT Symap_out : Array[0..15] of Byte;
-      Symap_in : "UDT_Symap_In";
-      Static_1 { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} AT Symap_in : Array[0..157] of Byte;
-   END_VAR
 
-   VAR_TEMP 
-      retVal : Int;
-      ret_val_out : Int;
-      ret_val_in : Int;
-      k : Int;
-   END_VAR
+VAR		
+    Start_PIB : Int := 200;       // Начальный адрес PIB (Hardware)
+    In_Bytes_Count : Int := 208;  // Кол-во байт входов In
+    Start_PQB : Int := 200;       // Начальный адрес PQB (Hardware)
+    Out_Bytes_Count : Int := 16;  // Кол-во байт выходов Out
+    N_device : Int := 30;         // Кол-во Symap
+    K_Filter : Real := 0.1;       // ИСПРАВЛЕНО: Добавлен отсутствующий коэффициент фильтрации
+    History_Analog : Array[1..30, 1..41] of Real;
+END_VAR
 
+VAR_TEMP	
+    i : Int;           // Индекс текущего устройства 1..30
+    b : Int;           // Индекс байта для циклов 
+    ch : Int;          // Индекс аналогового канала 1..41
+    Current_PIB : Int; // Вычисленный физический адрес входов
+    Current_PQB : Int; // Вычисленный физический адрес выходов	
+    
+    // --- НАЛОЖЕНИЕ В ПАМЯТИ (OVERLAY) ---
+    In_Buffer_Bytes : Array[0..207] of Byte;
+    In_Structure AT In_Buffer_Bytes : "UDT_Symap_In";
+    In_Buffer_Words AT In_Buffer_Bytes : Array[1..104] of Word;
+    
+    Current_Raw_Real : Real;
+END_VAR
 
 BEGIN
-	//Запись данных в SYMAP
-	//
-	//Передача выходных данных 
-	
-	// #ret_val_out := DPWR_DAT(LADDR  := W#16#52,      // Пример: адрес 82 в HEX
-	
-	//                      RECORD := #AT_Symap_out[0]); //  UDT целиком 12 байт
-	
-	// #ret_val_out := DPWR_DAT(LADDR  := W#16#5E,      // Пример: адрес 94 в HEX
-	
-	//                     RECORD := #AT_Symap_out[12]); //  UDT целиком 4 байт
-	
-	
-	//Запись в саймап ПБас 1,2
-	// FOR #i := 1 TO #n DO  // По колличеству саймап в профибас 1,2
-	// Получаем  адрес Q нужного выходда из заранее введенной структуры с адресами для PB1,2
-	//  Цикл записи 8 байт подготовленного времени в каждое устройство для PB1,2
-	// FOR #k := 0 TO 15 DO
-	
-	
-	
-	//     %QB(82+#k) := #AT_Symap_out[#k];
-	
-	// END_FOR;
-	// END_FOR;
-	
-	
-	//Получение входных данных 
-	
-	// #ret_val_in := DPRD_DAT(LADDR  := 1004, 
-	//                         RECORD => #Symap_in);
-END_FUNCTION_BLOCK
 
+// 1. ГЛАВНЫЙ ЦИКЛ ПО ВСЕМ УСТРОЙСТВАМ (от 1 до 30)
+FOR #i := 1 TO #N_device DO // ИСПРАВЛЕНО: Добавлен префикс #
+    
+    // Расчет стартового адреса входов (%PIB) для текущего устройства
+    #Current_PIB := #Start_PIB + ((#i - 1) * #In_Bytes_Count); // ИСПРАВЛЕНО: Добавлен префикс #
+    
+    // Побайтово собираем данные из периферии во временный массив
+    FOR #b := 0 TO (#In_Bytes_Count - 1) DO
+        // ИСПРАВЛЕНО: Вернули %PIB, так как адрес 200+ требует прямого периферийного доступа в S7-300
+        #In_Buffer_Bytes[#b] := %PIB(#Current_PIB + #b);
+    END_FOR;
+    
+    // Копируем мгновенную сырую структуру целиком в глобальный DB
+    "Read_write_Symap_Db".Devices[#i].In := #In_Structure;
+
+    // 2. ВЛОЖЕННЫЙ ЦИКЛ УСРЕДНЕНИЯ АНАЛОГОВЫХ КАНАЛОВ (Должен быть ВНУТРИ цикла устройств)
+    FOR #ch := 1 TO 41 DO
+        
+        // Читаем мгновенное значение из буфера (начиная с 14-го байта / 8-го слова)
+        #Current_Raw_Real := INT_TO_REAL(WORD_TO_INT(#In_Buffer_Words[#ch + 7]));
+        
+        // Расчет экспоненциального сглаживания
+        #History_Analog[#i, #ch] := #History_Analog[#i, #ch] + #K_Filter * (#Current_Raw_Real - #History_Analog[#i, #ch]);
+        
+        // Записываем усредненное значение в массив Filtered в DB
+        "Read_write_Symap_Db".Devices[#i].Filtered[#ch] := INT_TO_WORD(REAL_TO_INT(#History_Analog[#i, #ch]));
+        
+    END_FOR; // Конец цикла по каналам #ch
+
+END_FOR; // Конец главного цикла по устройствам #i
+
+END_FUNCTION_BLOCK

@@ -1,0 +1,32 @@
+﻿FUNCTION_BLOCK "FB7"
+TITLE = 'Time Synchronization Logic'
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+// ==========================================
+// 1. ОБЪЯВЛЕНИЕ И ЛОГИКА ФУНКЦИОНАЛЬНОГО БЛОКА FB5
+// ==========================================
+   VAR_INPUT 
+      Enable_Sync : Bool;   // Сигнал разрешения синхронизации
+   END_VAR
+
+   VAR_OUTPUT 
+      Sync_Complete : Bool;   // Сигнал успешного завершения
+   END_VAR
+
+   VAR 
+      Internal_State : Int;   // Внутренний шаг логики
+   END_VAR
+
+
+BEGIN
+	    // Пример простейшей логики внутри FB7
+	    IF #Enable_Sync THEN
+	        #Sync_Complete := TRUE;
+	        #Internal_State := 1;
+	    ELSE
+	        #Sync_Complete := FALSE;
+	        #Internal_State := 0;
+	    END_IF;
+	    
+END_FUNCTION_BLOCK
+

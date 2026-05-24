@@ -147,7 +147,7 @@ VERSION : 0.1
             X6_83 : Bool;
          END_STRUCT;
       END_STRUCT;
-      modul_7_b14_29 : Struct     // modul_7
+      modul_7_b14_29 : Struct     // modul_7__
          FDR_FR_b14_15 : Word;   
          FDR_U1_b16_17 : Word;   
          FDR_U2_b18_19 : Word;   
@@ -301,6 +301,9 @@ VERSION : 0.1
             AP_Event7 : Bool;
          END_STRUCT;
       END_STRUCT;
+      modul_6_b200_207 : Struct    // modul_6
+         RealTime_b0_7 : "Time_set_Symap";
+      END_STRUCT;
    END_STRUCT;
    
 END_TYPE
@@ -309,7 +312,7 @@ TYPE "UDT_Symap_OUT_b0_15"
 VERSION : 0.1
    STRUCT
       "module_1_b0_11" : Struct
-         "Events byte_350_357_b0" : Struct
+         "Events byte_350_365_b0_1" : Struct
             "event_350" : Bool;
             "event_351" : Bool;
             "event_352" : Bool;
@@ -318,8 +321,6 @@ VERSION : 0.1
             "event_355" : Bool;
             "event_356" : Bool;
             "event_357" : Bool;
-         END_STRUCT;
-         "Events byte_358_365_b1" : Struct
             "event_358" : Bool;
             "event_359" : Bool;
             "event_360" : Bool;
@@ -329,7 +330,7 @@ VERSION : 0.1
             "event_364" : Bool;
             "event_365" : Bool;
          END_STRUCT;
-         Control_Byte_b2 : Struct
+         Control_Byte_b2_3 : Struct
             "Change_work" : Bool;   // изменить режим работы
             Res : Bool;   // ACK
             Set_time : Bool;   // установить новое время
@@ -338,24 +339,22 @@ VERSION : 0.1
             Cb5 : Bool;
             Cb6 : Bool;
             Cb7 : Bool;
-         END_STRUCT;
-         New_Op_Mode_b3 : Struct
             local : Bool;
             remote : Bool;
             SCADA : Bool;
             "test_local" : Bool;
             "test_remote" : Bool;
-            NM5 : Bool;
+            NM5 : Bool; 
             NM6 : Bool;
             NM7 : Bool;
          END_STRUCT;
          Time_set_b4_11 : "Time_set_Symap";
       END_STRUCT;
-      "module_30_b12_15" : Struct
-         "instr_No_1_b5" : Byte;
-         "instr_No_2_b6" : Byte;
-         "Data val__1_b7" : Byte;
-         "Data val__2_b8" : Byte;
+      module_30_b12_15 : Struct
+         instr_No_1_b5 : Byte;
+         instr_No_2_b6 : Byte;
+         Data_val_1_b7 : Byte;
+         Data_val_2_b8 : Byte;
       END_STRUCT;
    END_STRUCT;
 

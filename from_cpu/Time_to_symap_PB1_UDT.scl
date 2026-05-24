@@ -1,0 +1,224 @@
+﻿FUNCTION_BLOCK "Time_to_symap_PB1_UDT"
+TITLE = Time_to_symap_Profibus
+{ S7_Optimized_Access := 'FALSE' }
+AUTHOR : jak
+FAMILY : p
+VERSION : 0.1
+//Функциональный блок для передачи времени SYMAP по Profibus через встроенный порт и через СP
+//Для использования блока необходимо.
+//1.В экземплярном DB ввести начальные адреса слов для каждого устройства внутреннего профибас. 
+//Symap_list\Symap_list[x]\Q_Start_Addr. Расчитано на 30 штукю
+//2. Задать значение в переменную n количество SYMAP внутреннего PROFIBUS  в программе. 
+//
+//3. Внести реальные задержки для Profibus через CP и для внутреннего. #TempDT1, #TempDT2. Внутренний работает быстрее.
+//
+//Для PROFIBUS через CP.
+//
+//1. Выяснить через какой DB идет передача данных через СР.  "NRU_WR" DB185
+//2. Внести измения в CASE (20, 40). Сделано для 3 SYMAP. 
+//3. Внести изменения в этот DB ("NRU_WR" DB185). Переменные для передачи времени сделать в виде массива (Array [0..7] of Byte) time_S1[x]
+//
+//Сделать вызов данного FB месте, предшествующем передачи данных через CP, для уменьшения погрешности при обработки проераммы.
+//Установить время синхронизации 15минут (900 000mS), для отладки 10секунд (10000mS)
+   VAR 
+      Symap_list : Array[1..30] of Struct   // Список начальных адвресов +4 для ПБ1,2
+         Q_Start_Addr : Int := 4;   // начальный адрес выходов в саймэп
+      END_STRUCT;
+      Step : Int;   // переменная для CASE
+      "Timer" {InstructionName := 'TON'; LibVersion := '1.0'} : TON;   // таймер для отсчета времени в разных участках програмы
+      n : Int := 21;   // количество SYMAP от  до 30
+      Period : Time := T#1M_10S;   // Период синхронизации
+      Set_time_udt { ExternalVisible := 'False'} : "Time_set_Symap";
+      AT_Set_time_udt { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} AT Set_time_udt : Array[0..7] of Byte;   // синхронизация общая для всех SYMAP
+      ALL_symap_out : Array[0..30] of "UDT_Symap_OUT_b0_15";   // Выходы всех возможных SYMAP 30 шт.
+      AT_ALL_symap_out { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} AT ALL_symap_out : Array[0..450] of Byte;
+      in : "UDT_Symap_In";
+   END_VAR
+
+   VAR_TEMP 
+      retVal : Int;   // Код ошибки
+      i : Int;   // переменная цикла
+      wTen1 : Word;   // десятки времени для внутреннего PB
+      wOne1 : Word;   // еденицы времени для внутреннего PB
+      tempInt1 : Int;   // единицы и десятки в одном слове для внутреннего PB
+      k : Int;   // переменная цикла для записи 8 байтов
+      DT_Array_byte1 : Array[0..7] of Byte;   // время в byte не сортированый
+      TempDT1 : Date_And_Time;   // время для передачи внутреннего PB
+      DT_Array_1 AT TempDT1 : Array[0..7] of Byte;   // считаное время в формате BCD в байтах. PB1,2
+      retVal1 : Int;
+      Control_Byte : Byte;   // контролоьный байт временно
+      ret_val_out : Int;
+   END_VAR
+
+
+BEGIN
+	// Запись в PB1-3 данных времени с учетом поправок по времени
+	// 
+	
+	CASE #Step OF
+	    0:// 1. Считываем системное время контроллера в переменную #TempDT1,2
+	        #retVal := RD_SYS_T(#TempDT1);
+	       
+	        #TempDT1 := T_ADD(IN1 := #TempDT1, IN2 := T#100ms);     //поправка в связи со 100 ms задерзкой 
+	       
+	        
+	        #TempDT1 := T_ADD(IN1 := #TempDT1, IN2 := T#2ms);     //поправка в связи со свойствами сети и циклом программы
+	       
+	        
+	        // --- ШАГ 0: Начальная установка времени (Байт 3) ---
+	        // Здесь ваш код записи времени в Symap 
+	        // 
+	        // 1. Цикл для первых 6 байт (стандартный BCD -> INT)
+	        FOR #i := 0 TO 6 DO     // 1. Вычисляем десятки и единицы для PB1,2
+	            
+	            #wTen1 := SHR(IN := (BYTE_TO_WORD(#DT_Array_1[#i]) AND 16#00F0), N := 4);
+	            #wOne1 := BYTE_TO_WORD(#DT_Array_1[#i]) AND 16#000F;
+	            
+	         
+	            
+	            // 2. Считаем сумму в промежуточную переменную (INT или DINT) для внутреннего PB
+	            #tempInt1 := DINT_TO_INT(WORD_TO_DINT(#wTen1) * 10 + WORD_TO_DINT(#wOne1));
+	            
+	            
+	            // 3. Конвертируем INT обратно в BYTE для записи в выходной массив
+	            // Цепочка: INT -> WORD -> BYTE
+	            #DT_Array_byte1[#i] := WORD_TO_BYTE(INT_TO_WORD(#tempInt1));
+	            
+	            
+	        END_FOR;
+	        
+	        // Только для 7-го байта (Единицы мс)
+	        #wOne1 := SHR(IN := (BYTE_TO_WORD(#DT_Array_1[7]) AND 16#00F0), N := 4);
+	        #DT_Array_byte1[7] := WORD_TO_BYTE(#wOne1);
+	        
+	        
+	        
+	        //Формирование структуры UDT для времени
+	        #Set_time_udt.month := #DT_Array_byte1[1]; // МЕСЯЦ (Байт 1 в DT)
+	        #Set_time_udt.year := #DT_Array_byte1[0]; // ГОД   (Байт 0 в DT)
+	        #Set_time_udt.hour := #DT_Array_byte1[3]; // ЧАС   (Байт 3 в DT)
+	        #Set_time_udt.day := #DT_Array_byte1[2]; // ДЕНЬ  (Байт 2 в DT
+	        #Set_time_udt.second := #DT_Array_byte1[5]; // СЕКУНДА (Байт 5 в DT)
+	        #Set_time_udt.minute := #DT_Array_byte1[4]; // МИНУТА  (Байт 4 в DT)
+	        #Set_time_udt."millisecond low Byte" := #DT_Array_byte1[7]; // МИЛИСЕКУНДА (L)  (Байт 7 в DT) единиц 
+	        #Set_time_udt."millisecond high Byte" := #DT_Array_byte1[6];  // МИЛИСЕКУНДА (h)  (Байт 6 в DT) сотни и
+	        
+	        
+	        // Из документации
+	        // 
+	        // 5  New time year                                  
+	        // 4 New time month              
+	        // 7 New time day               
+	        // 6 New time hour              
+	        // 9 New time minute           
+	        // 8 New time second
+	        // 11  New time millisecond low Byte
+	        // 10  New time millisecond high Byte
+	        
+	        // Алгоритм записи времени в SYMAP из документации
+	        // o Установите новое время
+	        // o Подождите 100 мсек.
+	        // o Установите бит 2в байте 2 (L->H).
+	        // o Подождите 500мсек.
+	        // o Перезапустите бит 2 в байте 2.
+	        
+	        //Запись в саймап ПБас 1,2
+	        FOR #i := 1 TO #n DO  // По колличеству саймап в профибас 1,2
+	            // Получаем  адрес Q нужного выходда из заранее введенной структуры с адресами для PB1,2
+	            //  Цикл записи 8 байт подготовленного времени в каждое устройство для PB1,2
+	            FOR #k := 0 TO 7 DO
+	                
+	                %QB(#Symap_list[#i].Q_Start_Addr + #k) := #AT_Set_time_udt[#k];
+	                
+	            END_FOR;
+	        END_FOR;
+	        
+	        
+	        #Step := 10;
+	        
+	    10: // --- ШАГ 10: Ожидание 100 мс ---
+	        #Timer(IN := TRUE,
+	               PT := T#100MS);
+	        IF #Timer.Q THEN
+	            #Timer(IN := FALSE,
+	                   PT := T#0MS); // Сброс таймера для следующего шага
+	            #Step := 20;
+	        END_IF;
+	        
+	    20: // --- ШАГ 20: Установка бита 2 в байте 2 (L -> H) ---
+	        // Используем маску 16#04 (это 2-й бит: 2^2 = 4)
+	        // 
+	        FOR #i := 1 TO 21 DO  // По колличеству саймап в профибас 1,2
+	            // Получаем  адрес Q нужного выходда из заранее введенной структуры с адресами для PB1,2
+	            //  Цикл записи второй бит во второй байт для установки нового времени  для PB1,2
+	            
+	            
+	            %QB(#Symap_list[#i].Q_Start_Addr - 1) := %QB(#Symap_list[#i].Q_Start_Addr - 1) OR 16#04;
+	            
+	            // !!!!!Для обработки в цикле
+	            // Запись в конкретный бит байта по смещению #offset
+	            //WORD_TO_BLOCK_DB(#db_num).DX[#offset, 2] := 1; // .X2 — это третий бит (маска 16#04) 
+	            
+	            
+	        END_FOR;
+	        
+	        
+	        
+	        #Step := 30;
+	        
+	    30: // --- ШАГ 30: Ожидание 500 мс ---
+	        #Timer(IN := TRUE,
+	               PT := T#500MS);
+	        IF #Timer.Q THEN
+	            #Timer(IN := FALSE,
+	                   PT := T#0MS);
+	            #Step := 40;
+	        END_IF;
+	        
+	    40: // --- ШАГ 40: Сброс бита 2 в байте 2 и ПЕРЕЗАПУСК ---
+	        
+	        
+	        FOR #i := 1 TO 21 DO  // По колличеству саймап в профибас 1,2
+	            // Получаем  адрес Q нужного выходда из заранее введенной структуры с адресами для PB1,2
+	            //  Цикл записи второй бит во второй байт для установки нового времени для PB1,2
+	            
+	            %QB(#Symap_list[#i].Q_Start_Addr - 1) := %QB(#Symap_list[#i].Q_Start_Addr - 1) AND NOT 16#04;
+	            
+	            
+	        END_FOR;
+	      
+	     
+	        
+	        //  переходим на Шаг 50, 
+	        #Step := 50;
+	        
+	    50: // --- ШАГ 30: Ожидание 10 с период синхронизации10 сек для отладки, в рабочем состонии раз в 15 минут---
+	        #Timer(IN := TRUE,
+	               PT := #Period);
+	        IF #Timer.Q THEN
+	            #Timer(IN := FALSE,
+	                   PT := T#0MS);
+	            #Step := 0;
+	        END_IF;
+	        
+	    ELSE
+	        #Step := 0;
+	END_CASE;
+	//______________________________________________задача синхронизции времени окончена_____________________________________
+	
+	
+	
+	//Запись данных выходов, кроме данных времени и control byte и new op mode
+	//
+	
+	FOR #i := 1 TO #n DO  // По колличеству саймап в профибас 1,2
+	    // Получаем  адрес Q нужного выходда из заранее введенной структуры с адресами для PB1,2
+	    //  Цикл записи 8 байт подготовленного времени в каждое устройство для PB1,2
+	    FOR #k := 0 TO 2 DO
+	        
+	        %QB(#Symap_list[#i].Q_Start_Addr + #k) := #AT_ALL_symap_out[#k];
+	        
+	    END_FOR;
+	END_FOR;
+END_FUNCTION_BLOCK
+

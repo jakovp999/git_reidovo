@@ -1,0 +1,30 @@
+json
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Update TIA Portal Block",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoExit",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "C:\\Users\\jak\\Desktop\\tia 15_1\\reidovo\\Source\\git_reidovo\\Openes\\sync.ps1",
+                "-SclPath",
+                "${file}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "focus": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

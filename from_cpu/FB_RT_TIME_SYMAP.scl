@@ -1,0 +1,40 @@
+﻿FUNCTION_BLOCK "FB_RT_TIME_SYMAP"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+   VAR_IN_OUT 
+      Start_Address : Int;
+   END_VAR
+
+   VAR 
+      Time_in : "Time_set_Symap";
+      Buffer { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} AT Time_in : Array[0..7] of Byte;
+   END_VAR
+
+   VAR_TEMP 
+      i : Int;
+   END_VAR
+
+
+BEGIN
+	// 1. Цикл побайтового чтения из периферии ввода (код области 16#81 = Inputs)
+	// 
+	
+	
+	FOR #i := 0 TO 7 DO
+	    #Buffer[#i] := %IB(#Start_Address + #i):P;
+	END_FOR;
+	
+	
+	// 2. Распределение считанных в цикле байт по полям вашей UDT структуры
+	// #Symap_DB_Record.month := #Buffer[0];
+	// #Symap_DB_Record.year := #Buffer[1];
+	// #Symap_DB_Record.hour := #Buffer[2];
+	// #Symap_DB_Record.day := #Buffer[3];
+	// #Symap_DB_Record.second := #Buffer[4];
+	// #Symap_DB_Record.minute := #Buffer[5];
+	// #Symap_DB_Record."millisecond high_Byte" := #Buffer[6];
+	// #Symap_DB_Record."millisecond low_Byte" := #Buffer[7];
+	// 
+	
+END_FUNCTION_BLOCK
+

@@ -1,0 +1,3 @@
+2026-05-22 13:24:31,121 [3] INFO  Siemens.TiaPortal.OpennessApi15_1.Implementations.Global AttachToPortal - Try to attach to the running TIA Portal instance.., please acknowledge the security dialog.
+2026-05-22 13:24:31,255 [3] INFO  Siemens.TiaPortal.OpennessApi15_1.Implementations.Global AttachToPortal - Search for any instances
+2026-05-22 13:24:39,851 [3] INFO  Siemens.TiaPortal.OpennessApi15_1.Implementations.Project GetPlcs - Found plc PLC_1 with parent name S7300/ET200M station_1
