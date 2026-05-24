@@ -2,10 +2,13 @@ DATA_BLOCK "Read_write_Symap_Db"
 VERSION : 0.1
 // Глобальный блок данных Stucke SYMAP
 STRUCT 
-Devices : Array[1..30] of STRUCT
-In  : "UDT_Symap_In";          // Данные чтения
-Out : "UDT_Symap_OUT_b0_15";   // Данные записи
-END_STRUCT;
+    Devices : Array[1..30] of STRUCT
+        In  : "UDT_Symap_In";          // Данные чтения
+        Out : "UDT_Symap_OUT_b0_15";   // Данные записи
+        //Добавлен массив для усредненных аналоговых сигналов
+        Filtered : Array[1..41] of Word; 
+
+    END_STRUCT;
 END_STRUCT;
 
 BEGIN
