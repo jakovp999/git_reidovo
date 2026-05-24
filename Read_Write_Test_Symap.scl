@@ -1,4 +1,4 @@
-﻿FUNCTION_BLOCK "Read_Write_Symap"
+﻿FUNCTION_BLOCK "Read_Write_test_Symap"
 VERSION : 0.1
 
 VAR		
@@ -8,7 +8,7 @@ VAR
     Out_Bytes_Count : Int := 16;  // Кол-во байт выходов Out
     N_device : Int := 1;         // Кол-во Symap
     K_Filter : Real := 0.1;       // Коэффициент фильтрации
-    History_Analog : Array[1..30, 1..41] of Real; 
+    History_Analog : Array[1..1, 1..41] of Real; 
     First_Scan_Done : Bool := FALSE;     // Флаг для определения самого первого запуска блока
 
 END_VAR
