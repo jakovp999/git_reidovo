@@ -1,0 +1,120 @@
+TYPE "UDT_Symap_In_Factor"
+TITLE = Symap in
+VERSION : 0.1
+   STRUCT 
+      modul_7_b14_29 : Struct   // modul_7__
+         Fc_FDR_FR_b14_15 : Real;
+         Fc_FDR_U1_b16_17 : Real;
+         Fc_FDR_U2_b18_19 : Real;
+         Fc_FDR_U3_b20_21 : Real;
+         Fc_FDR_U12_b22_23 : Real;
+         Fc_FDR_U13_b24_25 : Real;
+         Fc_FDR_U23_b26_27 : Real;
+         Fc_FDR_UAvr_b28_29 : Real;
+      END_STRUCT;
+      modul_830_45 : Struct   // modul_8
+         Fc_BUS1_FR_b31_32 : Real;
+         Fc_BUS1_U1_b32_33 : Real;
+         Fc_BUS1_U2_b34_35 : Real;
+         Fc_BUS1_U3_b36_37 : Real;
+         Fc_BUS1_U12_b38_39 : Real;
+         Fc_BUS1_U13_b40_41 : Real;
+         Fc_BUS1_U23_b42_43 : Real;
+         Fc_BUS1_UAvr_b44_45 : Real;
+      END_STRUCT;
+      modul_9_b46_61 : Struct   // modul_9
+         Fc_BUS2_FR_b46_47 : Real;
+         Fc_BUS2_U1_b48_49 : Real;
+         Fc_BUS2_U2_b50_51 : Real;
+         Fc_BUS2_U3_b52_53 : Real;
+         Fc_BUS2_U12_b54_55 : Real;
+         Fc_BUS2_U13_b56_57 : Real;
+         Fc_BUS2_U23_b58_59 : Real;
+         Fc_BUS2_UAvr_b60_61 : Real;
+      END_STRUCT;
+      modul_10_b62_69 : Struct   // modul_10
+         Fc_FDR_I1_b62_63 : Real;
+         Fc_FDR_I2_b64_65 : Real;
+         Fc_FDR_I3_b65_67 : Real;
+         Fc_FDR_IAvr_b68_69 : Real;
+      END_STRUCT;
+      modul_12_b70_77 : Struct   // modul_12
+         Fc_FDR_P_b70_71 : Real;
+         Fc_FDR_Q_b72_73 : Real;
+         Fc_FDR_S_b74_75 : Real;
+         Fc_FDR_PF_b76_77 : Real;
+      END_STRUCT;
+      modul_13_b78_83 : Struct   // modul_13
+         Fc_FDR_PL1_b78_79 : Real;
+         Fc_FDR_PL2_b80_81 : Real;
+         Fc_FDR_PL3_b82_83 : Real;
+      END_STRUCT;
+      modul_14_b84_89 : Struct   // modul_14
+         Fc_FDR_QL1_b84_85 : Real;
+         Fc_FDR_QL2_b86_87 : Real;
+         Fc_FDR_QL3_b88_89 : Real;
+      END_STRUCT;
+      modul_15_b90_95 : Struct   // modul_15
+         Fc_FDR_PFL1_b90_91 : Real;
+         Fc_FDR_PFL2_b92_93 : Real;
+         Fc_FDR_PFL3_b94_95 : Real;
+      END_STRUCT;
+      modul_18_b96_111 : Struct   // modul_18
+         Fc_P_activ_b96_99 : Real;
+         Fc_P_obr_b100_103 : Real;
+         Fc_P_emk_reakt_b104_107 : Real;
+         Fc_P_ind_reakt_b108_111 : Real;
+      END_STRUCT;
+      modul_16_b112_119 : Struct   // modul_16
+         Fc_Io1_b112_113 : Real;
+         Fc_Uo1_b114_115 : Real;
+         Fc_Po1_b116_117 : Real;
+         Fc_Qo1_b118_119 : Real;
+      END_STRUCT;
+      modul_25_b120_129 : Struct   // modul_25
+         Fc_Alarm1_b120_121 : Real;
+         Fc_Alarm2_b122_123 : Real;
+         Fc_Alarm3_b124_125 : Real;
+         Fc_Alarm4_b126_127 : Real;
+         Fc_Alarm5_b128_129 : Real;
+      END_STRUCT;
+      modul_31_b130_155 : Struct   // modul_31
+         Fc_PM_Gen_number_b130_131 : Real;
+         Fc_PM_BCG_prstatus_b132_133 : Real;
+         Fc_PM_BCG_ownstatus_b134_135 : Real;
+         Fc_PM_BCG_netstatus_b136_137 : Real;
+         Fc_PM_8_9_b138_139 : Real;
+         Fc_PM_10_11_b140_141 : Real;
+         Fc_PM_12_13_b142_143 : Real;
+         Fc_PM_14_15_b144_145 : Real;
+         Fc_PM_16_17_b146_147 : Real;
+         Fc_PM_18_19_b148_149 : Real;
+         Fc_PM_20_21_b150_151 : Real;
+         Fc_PM_asym_load_point_b152_153 : Real;
+         Fc_PM_asym_power_factor_b151_155 : Real;
+      END_STRUCT;
+      modul_32_b156_173 : Struct   // modul_32
+         Fc_P_kw_b156_157 : Real;
+         Fc_P_ps_b158_159 : Real;
+         Fc_F_I_amp_b160_161 : Real;
+         Fc_F_I_ps_b162_163 : Real;
+         Fc_F_U_b164_165 : Real;
+         Fc_F_freg_b166_167 : Real;
+         Fc_F_cosf_b168_169 : Real;
+         Fc_B1_U_b170_171 : Real;
+         Fc_B1_freg1_b172_173 : Real;
+      END_STRUCT;
+      modul_33_b174_189 : Struct   // modul_33
+         Fc_RPM_b174_175 : Real;
+         Fc_BR1_ON_cycles_b176_177 : Real;
+         Fc_BR2_ON_cycles_b178_179 : Real;
+         Fc_BR3_ON_cycles_b180_181 : Real;
+         Fc_Start_counter_b182_183 : Real;
+         Fc_DP_MD33_R1_b184_185 : Real;
+         Fc_DP_MD33_R2_b186_187 : Real;
+         Fc_DP_MD33_R3_b188_189 : Real;
+      END_STRUCT;
+   END_STRUCT;
+
+END_TYPE
+
