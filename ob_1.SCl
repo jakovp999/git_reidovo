@@ -1,24 +1,236 @@
-﻿ORGANIZATION_BLOCK OB1
-TITLE = 'Main Program Loop'
+﻿ORGANIZATION_BLOCK "Main"
+TITLE = "Main Program Cycle"
+{ S7_Optimized_Access := 'FALSE' }
 VERSION : 0.1
 
 VAR_TEMP
-    // ������������ ��������� ��������� ��������� ���������� OB1 ��� S7-300
-    OB1_EV_CLASS   : BYTE;   
-    OB1_SCAN_1     : BYTE;   
-    OB1_PRIORITY   : BYTE;   
-    OB1_OB_NUMBR   : BYTE;   
-    OB1_RESERVED_1 : BYTE;   
-    OB1_RESERVED_2 : BYTE;   
-    OB1_PREV_CYCLE : INT;    
-    OB1_MIN_CYCLE  : INT;    
-    OB1_MAX_CYCLE  : INT;    
-    OB1_DATE_TIME  : DATE_AND_TIME; 
+    // Стандартные 20 байт системного интерфейса OB1 для S7-300
+    OB1_EV_CLASS   : BYTE;   // 16#11 (Active), 16#12 (Not active)
+    OB1_SCAN_1     : BYTE;   // Scan type (1=Cold, 2=Warm, 3=Cyclic, 4=Fast, 5=Background)
+    OB1_PRIORITY   : BYTE;   // Priority class (1)
+    OB1_OB_NUMBR   : BYTE;   // OB number (1)
+    OB1_RESERVED_1 : BYTE;   // Reserved
+    OB1_RESERVED_2 : BYTE;   // Reserved
+    OB1_PREV_CYCLE : INT;    // Cycle time of previous OB1 scan (ms)
+    OB1_MIN_CYCLE  : INT;    // Minimum cycle time since last start (ms)
+    OB1_MAX_CYCLE  : INT;    // Maximum cycle time since last start (ms)
+    OB1_DATE_TIME  : DATE_AND_TIME; // Date and time when OB1 was started (8 bytes)
 END_VAR
 
 BEGIN
-    // ����� ������ ����� ������ �� ����������� �����
-    UC FB6, DB5;
+    // =================================================================
+    // ПОСТРОЧНАЯ СИМУЛЯЦИЯ (ИСПРАВЛЕН ИНТЕРФЕЙС OB1 ДЛЯ S7-300)
+    // =================================================================
 
+    %IB200:P := %MB200;
+    %IB201:P := %MB201;
+    %IB202:P := %MB202;
+    %IB203:P := %MB203;
+    %IB204:P := %MB204;
+    %IB205:P := %MB205;
+    %IB206:P := %MB206;
+    %IB207:P := %MB207;
+    %IB208:P := %MB208;
+    %IB209:P := %MB209;
+    %IB210:P := %MB210;
+    %IB211:P := %MB211;
+    %IB212:P := %MB212;
+    %IB213:P := %MB213;
+    %IB214:P := %MB214;
+    %IB215:P := %MB215;
+    %IB216:P := %MB216;
+    %IB217:P := %MB217;
+    %IB218:P := %MB218;
+    %IB219:P := %MB219;
+    %IB220:P := %MB220;
+    %IB221:P := %MB221;
+    %IB222:P := %MB222;
+    %IB223:P := %MB223;
+    %IB224:P := %MB224;
+    %IB225:P := %MB225;
+    %IB226:P := %MB226;
+    %IB227:P := %MB227;
+    %IB228:P := %MB228;
+    %IB229:P := %MB229;
+    %IB230:P := %MB230;
+    %IB231:P := %MB231;
+    %IB232:P := %MB232;
+    %IB233:P := %MB233;
+    %IB234:P := %MB234;
+    %IB235:P := %MB235;
+    %IB236:P := %MB236;
+    %IB237:P := %MB237;
+    %IB238:P := %MB238;
+    %IB239:P := %MB239;
+    %IB240:P := %MB240;
+    %IB241:P := %MB241;
+    %IB242:P := %MB242;
+    %IB243:P := %MB243;
+    %IB244:P := %MB244;
+    %IB245:P := %MB245;
+    %IB246:P := %MB246;
+    %IB247:P := %MB247;
+    %IB248:P := %MB248;
+    %IB249:P := %MB249;
+    %IB250:P := %MB250;
+    %IB251:P := %MB251;
+    %IB252:P := %MB252;
+    %IB253:P := %MB253;
+    %IB254:P := %MB254;
+    %IB255:P := %MB255;
+    %IB256:P := %MB256;
+    %IB257:P := %MB257;
+    %IB258:P := %MB258;
+    %IB259:P := %MB259;
+    %IB260:P := %MB260;
+    %IB261:P := %MB261;
+    %IB262:P := %MB262;
+    %IB263:P := %MB263;
+    %IB264:P := %MB264;
+    %IB265:P := %MB265;
+    %IB266:P := %MB266;
+    %IB267:P := %MB267;
+    %IB268:P := %MB268;
+    %IB269:P := %MB269;
+    %IB270:P := %MB270;
+    %IB271:P := %MB271;
+    %IB272:P := %MB272;
+    %IB273:P := %MB273;
+    %IB274:P := %MB274;
+    %IB275:P := %MB275;
+    %IB276:P := %MB276;
+    %IB277:P := %MB277;
+    %IB278:P := %MB278;
+    %IB279:P := %MB279;
+    %IB280:P := %MB280;
+    %IB281:P := %MB281;
+    %IB282:P := %MB282;
+    %IB283:P := %MB283;
+    %IB284:P := %MB284;
+    %IB285:P := %MB285;
+    %IB286:P := %MB286;
+    %IB287:P := %MB287;
+    %IB288:P := %MB288;
+    %IB289:P := %MB289;
+    %IB290:P := %MB290;
+    %IB291:P := %MB291;
+    %IB292:P := %MB292;
+    %IB293:P := %MB293;
+    %IB294:P := %MB294;
+    %IB295:P := %MB295;
+    %IB296:P := %MB296;
+    %IB297:P := %MB297;
+    %IB298:P := %MB298;
+    %IB299:P := %MB299;
+    %IB300:P := %MB300;
+    %IB301:P := %MB301;
+    %IB302:P := %MB302;
+    %IB303:P := %MB303;
+    %IB304:P := %MB304;
+    %IB305:P := %MB305;
+    %IB306:P := %MB306;
+    %IB307:P := %MB307;
+    %IB308:P := %MB308;
+    %IB309:P := %MB309;
+    %IB310:P := %MB310;
+    %IB311:P := %MB311;
+    %IB312:P := %MB312;
+    %IB313:P := %MB313;
+    %IB314:P := %MB314;
+    %IB315:P := %MB315;
+    %IB316:P := %MB316;
+    %IB317:P := %MB317;
+    %IB318:P := %MB318;
+    %IB319:P := %MB319;
+    %IB320:P := %MB320;
+    %IB321:P := %MB321;
+    %IB322:P := %MB322;
+    %IB323:P := %MB323;
+    %IB324:P := %MB324;
+    %IB325:P := %MB325;
+    %IB326:P := %MB326;
+    %IB327:P := %MB327;
+    %IB328:P := %MB328;
+    %IB329:P := %MB329;
+    %IB330:P := %MB330;
+    %IB331:P := %MB331;
+    %IB332:P := %MB332;
+    %IB333:P := %MB333;
+    %IB334:P := %MB334;
+    %IB335:P := %MB335;
+    %IB336:P := %MB336;
+    %IB337:P := %MB337;
+    %IB338:P := %MB338;
+    %IB339:P := %MB339;
+    %IB340:P := %MB340;
+    %IB341:P := %MB341;
+    %IB342:P := %MB342;
+    %IB343:P := %MB343;
+    %IB344:P := %MB344;
+    %IB345:P := %MB345;
+    %IB346:P := %MB346;
+    %IB347:P := %MB347;
+    %IB348:P := %MB348;
+    %IB349:P := %MB349;
+    %IB350:P := %MB350;
+    %IB351:P := %MB351;
+    %IB352:P := %MB352;
+    %IB353:P := %MB353;
+    %IB354:P := %MB354;
+    %IB355:P := %MB355;
+    %IB356:P := %MB356;
+    %IB357:P := %MB357;
+    %IB358:P := %MB358;
+    %IB359:P := %MB359;
+    %IB360:P := %MB360;
+    %IB361:P := %MB361;
+    %IB362:P := %MB362;
+    %IB363:P := %MB363;
+    %IB364:P := %MB364;
+    %IB365:P := %MB365;
+    %IB366:P := %MB366;
+    %IB367:P := %MB367;
+    %IB368:P := %MB368;
+    %IB369:P := %MB369;
+    %IB370:P := %MB370;
+    %IB371:P := %MB371;
+    %IB372:P := %MB372;
+    %IB373:P := %MB373;
+    %IB374:P := %MB374;
+    %IB375:P := %MB375;
+    %IB376:P := %MB376;
+    %IB377:P := %MB377;
+    %IB378:P := %MB378;
+    %IB379:P := %MB379;
+    %IB380:P := %MB380;
+    %IB381:P := %MB381;
+    %IB382:P := %MB382;
+    %IB383:P := %MB383;
+    %IB384:P := %MB384;
+    %IB385:P := %MB385;
+    %IB386:P := %MB386;
+    %IB387:P := %MB387;
+    %IB388:P := %MB388;
+    %IB389:P := %MB389;
+    %IB390:P := %MB390;
+    %IB391:P := %MB391;
+    %IB392:P := %MB392;
+    %IB393:P := %MB393;
+    %IB394:P := %MB394;
+    %IB395:P := %MB395;
+    %IB396:P := %MB396;
+    %IB397:P := %MB397;
+    %IB398:P := %MB398;
+    %IB399:P := %MB399;
+    %IB400:P := %MB400;
+    %IB401:P := %MB401;
+    %IB402:P := %MB402;
+    %IB403:P := %MB403;
+    %IB404:P := %MB404;
+    %IB405:P := %MB405;
+    %IB406:P := %MB406;
+    %IB407:P := %MB407;
+
+    // Ниже начинается ваш основной код программы...
+    
 END_ORGANIZATION_BLOCK
-

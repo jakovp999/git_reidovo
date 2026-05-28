@@ -16,6 +16,10 @@ VAR
     
     // Наложение плоского массива на эту структуру
     Factors AT Factor_Struct : ARRAY[1..41] OF REAL; 
+    In_Buffer_Bytes : Array[0..207] of Byte;   // --- НАЛОЖЕНИЕ В ПАМЯТИ (OVERLAY) ---
+    In_Structure AT In_Buffer_Bytes : "UDT_Symap_In";
+    In_Buffer_Words AT In_Buffer_Bytes : Array[1..104] of Word;
+    In_Buffer_DWords AT In_Buffer_Bytes : Array[1..52] of DWord;// ДОБАВЛЯЕМ НАЛОЖЕНИЕ DW (208 байт = 52 двойных слова)
 
 END_VAR
 
@@ -27,10 +31,7 @@ VAR_TEMP
     Current_PIB : Int; // Вычисленный физический адрес входов
     Current_PQB : Int; // Вычисленный физический адрес выходов	  
     Temp_Ch_History : Array[1..41] of Real;  // Локальный одномерный массив истории ТОЛЬКО ДЛЯ ОДНОГО текущего устройства
-    In_Buffer_Bytes : Array[0..207] of Byte;   // --- НАЛОЖЕНИЕ В ПАМЯТИ (OVERLAY) ---
-    In_Structure AT In_Buffer_Bytes : "UDT_Symap_In";
-    In_Buffer_Words AT In_Buffer_Bytes : Array[1..104] of Word;
-    In_Buffer_DWords AT In_Buffer_Bytes : Array[1..52] of DWord;// ДОБАВЛЯЕМ НАЛОЖЕНИЕ DW (208 байт = 52 двойных слова)
+    
     Current_Raw_Real : Real;
     Ret_Val_SFC : INT; 
 
@@ -68,7 +69,7 @@ BEGIN
             #In_Buffer_DWords[#ch_dw] := %ID(#Current_PIB + (#ch_dw - 1) * 4):P;
         END_FOR;
         
-        // 3.Копируем мгновенную сырую структуру целиком в глобальный DB   ???????????????? нужно  ли передавать байты в гл дб. 
+        // 3.Копируем мгновенную сырую структуру целиком в глобальный DB.
         //Для отладки можно потом нет смысла
         "Read_write_Symap_Db".Devices[#i].In := #In_Structure;
 
@@ -76,13 +77,12 @@ BEGIN
         FOR #ch := 1 TO 41 DO
             #Temp_Ch_History[#ch] := #History_Analog[#i, #ch];
         END_FOR;
-
         // 5. ВЛОЖЕННЫЙ ЦИКЛ УСРЕДНЕНИЯ (Работает СТРОГО с одномерным локальным массивом)
+
         FOR #ch := 1 TO 41 DO
             // Переводим мгновенное значение Word в Real один раз, начиная с 14 байта (7Words)
             #Current_Raw_Real := INT_TO_REAL(WORD_TO_INT(#In_Buffer_Words[#ch + 7]));
-            // А: ЗАПИСЫВАЕМ МГНОВЕННОЕ ЗНАЧЕНИЕ В REAL ДЛЯ SCADA  не фильтровано, не масштабировано. тогда зачем
-
+            
             // 2. Запускаем автоматический цикл масштабирования
             // Переменная #Temp_Factors автоматически видит данные из #Temp_Factor_Struct как массив. 
             // Запись масштабируемых но не усредненных данных в глобальный ДБ
@@ -103,16 +103,16 @@ BEGIN
             // При K_Filter := 0.2  (2.3) секунды
             // В: ЗАПИСЫВАЕМ УСРЕДНЕННОЕ ЗНАЧЕНИЕ В REAL ДЛЯ SCADA 
             // "Read_write_Symap_Db".Devices[#i].Filtered[#ch] := #Temp_Ch_History[#ch];  
-        END_FOR; 
-            // В: ЗАПИСЫВАЕМ отмасштабированые, но не усредненные  ЗНАЧЕНИЕ В REAL ДЛЯ SCADA 
-
+        END_FOR;
+    
+        // В: ЗАПИСЫВАЕМ отмасштабированые, но не усредненные  ЗНАЧЕНИЕ В REAL ДЛЯ SCADA 
         "Read_write_Symap_Db".Devices[#i].Raw := #Raw_Real_factor;
-            // 6. Возвращаем обновленную историю назад в память FB
+        // 6. Возвращаем обновленную историю назад в память FB
         FOR #ch := 1 TO 41 DO
             #History_Analog[#i, #ch] := #Temp_Ch_History[#ch];
         END_FOR;
 
-            // --- ЦИКЛ МАСШТАБИРОВАНИЯ ЧЕРЕЗ НАЛОЖЕНИЕ ПАМЯТИ (AT) ---
+        // --- ЦИКЛ МАСШТАБИРОВАНИЯ ЧЕРЕЗ НАЛОЖЕНИЕ ПАМЯТИ (AT) ---
 
         // 2. Запускаем автоматический цикл масштабирования
         // Переменная #Temp_Factors автоматически видит данные из #Temp_Factor_Struct как массив
