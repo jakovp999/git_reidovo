@@ -368,3 +368,67 @@ VERSION : 0.1
 
 END_TYPE
 
+// =================================================================
+// ТИП ДАННЫХ ДЛЯ ОБРАБОТАННЫХ ТЕХНОЛОГИЧЕСКИХ ПАРАМЕТРОВ (REAL)
+// =================================================================
+TYPE "UDT_Symap_Analog_Reals"
+   VERSION : 0.1
+   STRUCT
+      // l_7_b14_29
+      FDR_FR_b14_15 : REAL;
+      FDR_U1_b16_17 : REAL;
+      FDR_U2_b18_19 : REAL;
+      FDR_U3_b20_21 : REAL;
+      FDR_U12_b22_23 : REAL;
+      FDR_U13_b24_25 : REAL;
+      FDR_U23_b26_27 : REAL;
+      FDR_UAvr_b28_29 : REAL;
+      
+      // modul_830_45
+      BUS1_FR_b31_32 : REAL;
+      BUS1_U1_b32_33 : REAL;
+      BUS1_U2_b34_35 : REAL;
+      BUS1_U3_b36_37 : REAL;
+      BUS1_U12_b38_39 : REAL;
+      BUS1_U13_b40_41 : REAL;
+      BUS1_U23_b42_43 : REAL;
+      BUS1_UAvr_b44_45 : REAL;
+      
+      // modul_9_b46_61
+      BUS2_FR_b46_47 : REAL;
+      BUS2_U1_b48_49 : REAL;
+      BUS2_U2_b50_51 : REAL;
+      BUS2_U3_b52_53 : REAL;
+      BUS2_U12_b54_55 : REAL;
+      BUS2_U13_b56_57 : REAL;
+      BUS2_U23_b58_59 : REAL;
+      BUS2_UAvr_b60_61 : REAL;
+      
+      // modul_10_62_69
+      FDR_I1_b62_63 : REAL;
+      FDR_I2_b64_65 : REAL;
+      FDR_I3_b65_67 : REAL;
+      FDR_IAvr_b68_69 : REAL;
+      
+      // modul_12
+      FDR_P : REAL;
+      FDR_Q : REAL;
+      FDR_S : REAL;
+      FDR_PF : REAL;
+      
+      // modul_13
+      FDR_PL1 : REAL;
+      FDR_PL2 : REAL;
+      FDR_PL3 : REAL;
+      
+      // modul_14
+      FDR_QL1 : REAL;
+      FDR_QL2 : REAL;
+      FDR_QL3 : REAL;
+      
+      // modul_15
+      FDR_PFL1 : REAL;
+      FDR_PFL2 : REAL;
+      FDR_PFL3 : REAL;
+   END_STRUCT;
+END_TYPE

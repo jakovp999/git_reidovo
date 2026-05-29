@@ -1,0 +1,18 @@
+﻿DATA_BLOCK "DB_simul_in"
+{ S7_Optimized_Access := 'FALSE' } // Принудительно отключаем оптимизацию для S7-300
+VERSION : 0.1
+// Глобальный блок данных Stucke SYMAP
+STRUCT
+  // Резервируем первые 200 байт (с 0 по 199), чтобы сдвинуть адрес
+  _offset_200 : ARRAY [0..199] OF BYTE; 
+  Devices : ARRAY [1..30] OF STRUCT
+    In :  "UDT_Symap_In";          // Данные чтения
+    Out:  "UDT_Symap_OUT_b0_15";   // Данные записи
+  END_STRUCT; 
+
+END_STRUCT;
+
+BEGIN
+
+
+END_DATA_BLOCK

@@ -21,6 +21,12 @@ VAR
     In_Buffer_Words AT In_Buffer_Bytes : Array[1..104] of Word;
     In_Buffer_DWords AT In_Buffer_Bytes : Array[1..52] of DWord;// ДОБАВЛЯЕМ НАЛОЖЕНИЕ DW (208 байт = 52 двойных слова)
 
+    Raw : "UDT_Symap_Analog_Reals"; 
+    Raw_Array AT Raw : ARRAY[1..41] OF REAL;
+
+    Filtered : "UDT_Symap_Analog_Reals";
+    Tmp_Real_Array AT Tmp_Real_Struct : ARRAY[1..41] OF REAL;
+
 END_VAR
 
 VAR_TEMP	
@@ -85,8 +91,8 @@ BEGIN
             
             // 2. Запускаем автоматический цикл масштабирования
             // Переменная #Temp_Factors автоматически видит данные из #Temp_Factor_Struct как массив. 
-            // Запись масштабируемых но не усредненных данных в глобальный ДБ
-            #Raw_Real_factor[#ch]:= #Current_Raw_Real * #Factors[#ch];
+            // Запись масштабируемых но не усредненных данных в экз ДБ
+            #Raw_Array[#ch]:= #Current_Raw_Real * #Factors[#ch];
 
             // Б: Считаем математику фильтрации (все переменные теперь строго Real)
             //С учетом первого запуска, начинаем с первого считаного значения
@@ -106,7 +112,7 @@ BEGIN
         END_FOR;
     
         // В: ЗАПИСЫВАЕМ отмасштабированые, но не усредненные  ЗНАЧЕНИЕ В REAL ДЛЯ SCADA 
-        "Read_write_Symap_Db".Devices[#i].Raw := #Raw_Real_factor;
+        "Read_write_Symap_Db".Devices[#i].Raw := #Raw;
         // 6. Возвращаем обновленную историю назад в память FB
         FOR #ch := 1 TO 41 DO
             #History_Analog[#i, #ch] := #Temp_Ch_History[#ch];
@@ -117,8 +123,9 @@ BEGIN
         // 2. Запускаем автоматический цикл масштабирования
         // Переменная #Temp_Factors автоматически видит данные из #Temp_Factor_Struct как массив
         FOR #ch := 1 TO 41 DO
-            "Read_write_Symap_Db".Devices[#i].Filtered[#ch] := #Temp_Ch_History[#ch] * #Factors[#ch];
+            Tmp_Real_Array[#ch] := #Temp_Ch_History[#ch] * #Factors[#ch];
         END_FOR;
+        "Read_write_Symap_Db".Devices[#i].Filtered := #Filtered;
     END_FOR; 
     #First_Scan_Done := TRUE;
 END_FUNCTION_BLOCK

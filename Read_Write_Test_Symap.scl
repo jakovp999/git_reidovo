@@ -21,6 +21,12 @@ VAR
     In_Buffer_Words AT In_Buffer_Bytes : Array[1..104] of Word;
     In_Buffer_DWords AT In_Buffer_Bytes : Array[1..52] of DWord;// ДОБАВЛЯЕМ НАЛОЖЕНИЕ DW (208 байт = 52 двойных слова)
 
+    Raw : "UDT_Symap_Analog_Reals"; 
+    Raw_Array AT Raw : ARRAY[1..41] OF REAL;
+
+    Filtered : "UDT_Symap_Analog_Reals";
+    Tmp_Real_Array AT Tmp_Real_Struct : ARRAY[1..41] OF REAL;
+
 END_VAR
 
 VAR_TEMP	
@@ -43,15 +49,84 @@ END_VAR
 
 BEGIN
 
+        // 1. Копируем  структуру множителей из DB во временную переменную 
+
+        IF NOT #First_Scan_Done THEN
+        #Factor_Struct := "Read_write_Symap_Db".Factor;
+        END_IF;
+        // 2. ГЛАВНЫЙ ЦИКЛ ПО ВСЕМ УСТРОЙСТВАМ (от 1 до 30)
+    FOR #i := 1 TO #N_device DO 
         
-      
-           #In_Buffer_DWords[1] :=    %ID(200):P;
-      
+        // Расчет стартового адреса входов (%PIB) для текущего устройства
+        #Current_PIB := #Start_PIB + ((#i - 1) * #In_Bytes_Count);        
+
+
+        // ИСПРАВЛЕНИЕ: Вместо цикла FOR #b вызываем системную функцию чтения консистентных данных
+        // LADDR: Принимает адрес модуля, переведенный из Int в Word (например, 200 -> 16#00C8)
+        // RECORD: Передаем наш временный плоский массив байт. Функция заполнит его целиком.
+        //#Ret_Val_SFC := DPRD_DAT(LADDR := INT_TO_WORD(#Current_PIB), RECORD => #In_Buffer_Bytes);
+        // #Ret_Val_SFC := DPRD_DAT(LADDR := W#16#C8, RECORD => P#DB10.DBX0.0 BYTE 208);
+        // ПРИМЕЧАНИЕ ДЛЯ ОТЛАДКИ: Если #Ret_Val_SFC возвращает не 0, значит есть ошибка связи 
+        // или не совпадает длина буфера с настройками HW Config.
+
+//Симуляция. Чтение из DB
+#Ret_Val := BLKMOV(SRCBLK := "DB_simul_in".Devices, DSTBLK => #In_Buffer_DWords);
+                                            //  сбор данных через DWord (шаг адреса +4 байта)
+                                            //FOR #ch_dw := 1 TO 52 DO
+                                            //    #In_Buffer_DWords[#ch_dw] := %ID(#Current_PIB + (#ch_dw - 1) * 4):P;
+                                            //END_FOR;
         
         // 3.Копируем мгновенную сырую структуру целиком в глобальный DB.
         //Для отладки можно потом нет смысла
         "Read_write_Symap_Db".Devices[#i].In := #In_Structure;
 
-        
-  
+        // 4. Копируем историю ТОЛЬКО ТЕКУЩЕГО устройства в быстрый локальный одномерный массив
+        FOR #ch := 1 TO 41 DO
+            #Temp_Ch_History[#ch] := #History_Analog[#i, #ch];
+        END_FOR;
+        // 5. ВЛОЖЕННЫЙ ЦИКЛ УСРЕДНЕНИЯ (Работает СТРОГО с одномерным локальным массивом)
+
+        FOR #ch := 1 TO 41 DO
+            // Переводим мгновенное значение Word в Real один раз, начиная с 14 байта (7Words)
+            #Current_Raw_Real := INT_TO_REAL(WORD_TO_INT(#In_Buffer_Words[#ch + 7]));
+            
+            // 2. Запускаем автоматический цикл масштабирования
+            // Переменная #Temp_Factors автоматически видит данные из #Temp_Factor_Struct как массив. 
+            // Запись масштабируемых но не усредненных данных в экз ДБ
+            #Raw_Array[#ch]:= #Current_Raw_Real * #Factors[#ch];
+
+            // Б: Считаем математику фильтрации (все переменные теперь строго Real)
+            //С учетом первого запуска, начинаем с первого считаного значения
+            IF NOT #First_Scan_Done THEN
+                #Temp_Ch_History[#ch] := #Current_Raw_Real;
+                ELSE
+                #Temp_Ch_History[#ch] := #Temp_Ch_History[#ch] + #K_Filter * (#Current_Raw_Real - #Temp_Ch_History[#ch]);
+            END_IF;
+
+            //каждый шаг формулы равен 100 мс (OB35), мы можем точно рассчитать, за сколько секунд сигнал сгладится. 
+            //Существует строгое математическое правило для экспоненциального фильтра: сигнал достигает 99% 
+            //от своего нового значения за количество шагов, равное: 4,6/K_Filter. Для 0,1(4,6сек) колличество шагов 46
+            //Мы знаем, что один шаг занимает ровно 100 мс (0.1 секунды), значит фильтрация 4,6сек
+            // При K_Filter := 0.2  (2.3) секунды
+            // В: ЗАПИСЫВАЕМ УСРЕДНЕННОЕ ЗНАЧЕНИЕ В REAL ДЛЯ SCADA 
+            // "Read_write_Symap_Db".Devices[#i].Filtered[#ch] := #Temp_Ch_History[#ch];  
+        END_FOR;
+    
+        // В: ЗАПИСЫВАЕМ отмасштабированые, но не усредненные  ЗНАЧЕНИЕ В REAL ДЛЯ SCADA 
+        "Read_write_Symap_Db".Devices[#i].Raw := #Raw;
+        // 6. Возвращаем обновленную историю назад в память FB
+        FOR #ch := 1 TO 41 DO
+            #History_Analog[#i, #ch] := #Temp_Ch_History[#ch];
+        END_FOR;
+
+        // --- ЦИКЛ МАСШТАБИРОВАНИЯ ЧЕРЕЗ НАЛОЖЕНИЕ ПАМЯТИ (AT) ---
+
+        // 2. Запускаем автоматический цикл масштабирования
+        // Переменная #Temp_Factors автоматически видит данные из #Temp_Factor_Struct как массив
+        FOR #ch := 1 TO 41 DO
+            Tmp_Real_Array[#ch] := #Temp_Ch_History[#ch] * #Factors[#ch];
+        END_FOR;
+        "Read_write_Symap_Db".Devices[#i].Filtered := #Filtered;
+    END_FOR; 
+    #First_Scan_Done := TRUE;
 END_FUNCTION_BLOCK
