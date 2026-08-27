@@ -7,8 +7,8 @@ STRUCT
     Out:  "UDT_Symap_OUT_b0_15";   // Данные записи
     Raw: "UDT_Symap_Analog_Reals"; // Мгновенные значения входов  отмасштабируемые      
     Filtered: "UDT_Symap_Analog_Reals"; // Усредненные и отмасштабируемые значения входов
+     Factor : "UDT_Symap_In_Factor";  // Массив коэффициентов для всех аналоговых параметров  
   END_STRUCT;
-    Factor : "UDT_Symap_In_Factor";  // Массив коэффициентов для всех аналоговых параметров  
 END_STRUCT;
 
 BEGIN
