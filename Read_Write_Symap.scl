@@ -44,10 +44,10 @@ BEGIN
         // 1. ГЛАВНЫЙ ЦИКЛ ПО ВСЕМ УСТРОЙСТВАМ (от 1 до 30)
     FOR #i := 1 TO #N_device DO 
         // 2. Копируем  структуру множителей из DB во временную переменную 
-        IF NOT #First_Scan_Done THEN
+        
             #Factor_Struct := "Read_write_Symap_Db".Devices[#i].Factor;
             #Filter_Struct := "Read_write_Symap_Db".Devices[#i].K_Filter;
-        END_IF;
+      
 
         
         // 3. Расчет стартового адреса входов (%PIB) для текущего устройства
