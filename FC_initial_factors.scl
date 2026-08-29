@@ -1,0 +1,40 @@
+﻿FUNCTION FC_InitFactors : VOID
+TITLE = 'Инициализация через наложение памяти REAL для масштабирования сигналов'
+VERSION : 0.1
+
+VAR_TEMP
+    i : INT;      // Индекс для цикла по 30 устройствам
+    k : INT;      // Индекс для цикла по 59 коэффициентам внутри одного устройства
+    retVal : INT; // Для системной функции BLKMOV
+    
+    // 1. Создаем буферную переменную структуры в памяти ПЛК
+    tempFactorStruct : "UDT_Symap_In_Factor";
+    
+    // 2. НАЛОЖЕНИЕ: Представляем эту же область памяти как простой массив из 41 числа REAL
+    tempFactorArray AT tempFactorStruct : ARRAY [1..41] OF REAL;
+END_VAR
+
+BEGIN
+    
+    // Цикл по всем 30 устройствам SYMAP
+    FOR #i := 1 TO 30 DO
+        
+        // Шаг А: Копируем структуру Factor конкретного устройства из DB во временную память
+        #retVal := BLKMOV(SRCBLK := "Read_write_Symap_Db".Devices[#i].Factor, 
+                          DSTBLK := #tempFactorStruct);
+        
+        // Шаг Б: Работаем с памятью структуры как с плоским массивом чисел
+        FOR #k := 1 TO 41 DO
+            // Если в байте памяти лежит 0.0, пишем туда уставку 1.0
+            IF #tempFactorArray[#k] = 0.0 THEN
+                #tempFactorArray[#k] := 1.0;
+            END_IF;
+        END_FOR;
+        
+        // Шаг В: Копируем измененную структуру из буфера обратно в глобальный DB
+        #retVal := BLKMOV(SRCBLK := #tempFactorStruct, 
+                          DSTBLK := "Read_write_Symap_Db".Devices[#i].Factor);
+                          
+    END_FOR;
+
+END_FUNCTION
