@@ -20,7 +20,7 @@ BEGIN
     FOR #i := 1 TO 30 DO
         
         // Шаг А: Копируем структуру Factor конкретного устройства из DB во временную память
-        #retVal := BLKMOV(SRCBLK := "Read_write_Symap_Db".Devices[#i].Factor, 
+        #retVal := BLKMOV(SRCBLK := "Read_write_Symap_Db".Devices[#i].Wincc.Factor, 
                           DSTBLK := #tempFactorStruct);
         
         // Шаг Б: Работаем с памятью структуры как с плоским массивом чисел
@@ -33,7 +33,7 @@ BEGIN
         
         // Шаг В: Копируем измененную структуру из буфера обратно в глобальный DB
         #retVal := BLKMOV(SRCBLK := #tempFactorStruct, 
-                          DSTBLK := "Read_write_Symap_Db".Devices[#i].Factor);
+                          DSTBLK := "Read_write_Symap_Db".Devices[#i].Wincc.Factor);
                           
     END_FOR;
 

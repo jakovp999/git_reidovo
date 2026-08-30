@@ -45,8 +45,8 @@ BEGIN
     FOR #i := 1 TO #N_device DO 
         // 2. Копируем  структуру множителей из DB во временную переменную 
         
-            #Factor_Struct := "Read_write_Symap_Db".Devices[#i].Factor;
-            #Filter_Struct := "Read_write_Symap_Db".Devices[#i].K_Filter;
+           #Factor_Struct := "Read_write_Symap_Db".Devices[#i].Wincc.Factor;
+           #Filter_Struct := "Read_write_Symap_Db".Devices[#i].Wincc.K_Filter;
       
 
         
@@ -111,7 +111,7 @@ BEGIN
         FOR #ch := 1 TO 41 DO
             Tmp_Real_Array[#ch] := #Temp_Ch_History[#ch] * #Factors[#ch];
         END_FOR;
-        "Read_write_Symap_Db".Devices[#i].Filtered := #Filtered;
+        "Read_write_Symap_Db".Devices[#i].Wincc.Filtered := #Filtered;
     END_FOR; 
     #First_Scan_Done := TRUE;
 END_FUNCTION_BLOCK
