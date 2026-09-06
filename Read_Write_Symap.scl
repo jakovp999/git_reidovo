@@ -55,7 +55,7 @@ BEGIN
 
 
 //Симуляция. Чтение из DB
-#Ret_Val := BLKMOV(SRCBLK := "DB_simul_in".Devices, DSTBLK => #In_Buffer_DWords);
+#Ret_Val := BLKMOV(SRCBLK := "DB_simul_in".Devices[#i], DSTBLK => #In_Buffer_DWords);
                                             //  сбор данных через DWord (шаг адреса +4 байта)
                                             //FOR #ch_dw := 1 TO 52 DO
                                             //    #In_Buffer_DWords[#ch_dw] := %ID(#Current_PIB + (#ch_dw - 1) * 4):P;

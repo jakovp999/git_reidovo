@@ -1,0 +1,8 @@
+﻿TYPE "UDT_Winnc_for_Scada"
+VERSION : 0.1
+   STRUCT
+      "Read_write_Symap_Db_Devices{2}_Wincc_Out_module_30_b12_15_instr_No_2_b6(1)" : Bool;
+   END_STRUCT;
+
+END_TYPE
+
